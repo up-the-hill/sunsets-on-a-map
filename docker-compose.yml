@@ -26,7 +26,7 @@ services:
       - DATABASE_URL=postgres://postgres:password@db:5432/sunsets
     ports:
       - "3000:3000"
-    command: sh -c "npx drizzle-kit generate && npx drizzle-kit migrate && npm run start"
+    command: sh -c "npx drizzle-kit push && npm run start"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/styles/sunset"]
       interval: 10s
