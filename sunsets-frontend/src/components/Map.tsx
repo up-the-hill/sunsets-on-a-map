@@ -46,10 +46,12 @@ export default function Map() {
     setMapInstance(map);
 
     const control = new MapLibreSearchControl({
-      onResultSelected: feature => {
-        // You can add code here to take some action when a result is selected.
-        console.log(feature!.geometry!.coordinates);
-      },
+      searchOnEnter: true,
+      minWaitPeriodMs: 800,
+      // onResultSelected: feature => {
+      // You can add code here to take some action when a result is selected.
+      // console.log(feature!.geometry!.coordinates);
+      // },
       // You can also use our EU endpoint to keep traffic within the EU using the basePath option:
       // baseUrl: "https://api-eu.stadiamaps.com",
     });
