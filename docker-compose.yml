@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgis/postgis:18-3.6 
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: sunsets
+    volumes:
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d sunsets"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./sunsets-backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./sunsets-backend/.env
+    environment:
+      - DATABASE_URL=postgres://postgres:password@db:5432/sunsets
+    ports:
+      - "3000:3000"
+    command: sh -c "npx drizzle-kit generate && npx drizzle-kit migrate && npm run start"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/styles/sunset"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build: ./sunsets-frontend
+    restart: always
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - "80:80"
+
+volumes:
+  db-data:
