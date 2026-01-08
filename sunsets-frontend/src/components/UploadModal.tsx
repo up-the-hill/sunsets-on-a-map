@@ -122,12 +122,16 @@ export default function UploadModal({ handleCloseModal, clickMarker }: UploadMod
               padding: 1em;
               margin: auto auto;
               min-width: 20em;
+              display: grid;
+              gap: 0.5rem;
+              border-radius: 5px;
             `}>
-        <button onClick={handleCloseModal} className={css`float:right;`}>&#10005;</button>
-        <p>Upload Sunset</p>
-        <form onSubmit={handleSubmit}>
+        <p className={css`font-size: 1.2rem;`}>Upload Sunset
+          <button onClick={handleCloseModal} className={css`float:right; padding: 0.2rem 0.3rem; font-size: 0.8rem`}>&#10005;</button>
+        </p>
+        <form onSubmit={handleSubmit} className={css`display: grid; gap:0.2rem;`}>
           <input ref={fileRef} type="file" id="sunset" name="sunset" accept="image/png, image/jpeg" required />
-          <button>OK</button>
+          <button className={css`max-width: 10rem; `}>Upload</button>
           {uploading && (
             <Spinner />
           )}
