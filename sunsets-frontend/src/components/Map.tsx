@@ -6,9 +6,8 @@ import { createRoot } from 'react-dom/client';
 import Debug from './Debug';
 
 // maplibregl-js
-import maplibregl, { Popup, GeoJSONSource } from 'maplibre-gl';
-import { Marker } from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
+// import maplibregl, { Popup, GeoJSONSource } from 'maplibre-gl';
+// import { Marker } from 'maplibre-gl';
 
 // stadia maps search
 import { MapLibreSearchControl } from "@stadiamaps/maplibre-search-box";
@@ -21,7 +20,7 @@ async function loadPoints(map: maplibregl.Map) {
     const res = await fetch(`/api/sunsets`);
     const data = await res.json();
 
-    const source = map.getSource('sunsets') as GeoJSONSource;
+    const source = map.getSource('sunsets') as maplibregl.GeoJSONSource;
     if (source) {
       source.setData(data);
     }
@@ -37,7 +36,7 @@ export default function Map() {
   const [displayUploadModal, setDisplayUploadModal] = useState(false);
 
   useEffect(() => {
-    const map = new maplibregl.Map({
+    const map = new window.maplibregl.Map({
       container: 'map', // container id
       style: '/styles/sunset',
       center: [151.2057, -33.8727],
@@ -126,7 +125,7 @@ export default function Map() {
           layers: ['clusters']
         });
         const clusterId = features[0].properties.cluster_id;
-        const source = map.getSource('sunsets') as GeoJSONSource;
+        const source = map.getSource('sunsets') as maplibregl.GeoJSONSource;
 
         const zoom = await source.getClusterExpansionZoom(clusterId);
         map.easeTo({
@@ -152,7 +151,7 @@ export default function Map() {
         const popupNode = document.createElement('div');
         const root = createRoot(popupNode);
 
-        new Popup()
+        new window.maplibregl.Popup()
           .setLngLat(coordinates)
           .setDOMContent(popupNode)
           .addTo(map);
@@ -192,7 +191,7 @@ export default function Map() {
           clickMarkerRef.current.remove();
         }
 
-        const newMarker = new Marker()
+        const newMarker = new window.maplibregl.Marker()
           .setLngLat(e.lngLat)
           .addTo(map);
 

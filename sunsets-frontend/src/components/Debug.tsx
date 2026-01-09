@@ -1,12 +1,11 @@
-import { LngLat, LngLatBounds, Map } from 'maplibre-gl';
 import { css } from '@linaria/core';
 import { useEffect, useState } from 'react';
 
 interface DebugProps {
-  map: Map | null;
+  map: maplibregl.Map | null;
 }
 
-function getDistanceFromLatLonInKm(pos1: LngLat, pos2: LngLat) {
+function getDistanceFromLatLonInKm(pos1: maplibregl.LngLat, pos2: maplibregl.LngLat) {
   const R = 6371; // Radius of the earth in km
   const dLat = deg2rad(pos2.lat - pos1.lat);  // deg2rad below
   const dLon = deg2rad(pos2.lng - pos1.lng);
@@ -25,8 +24,8 @@ function deg2rad(deg: number) {
 }
 
 export default function Debug({ map }: DebugProps) {
-  const [center, setCenter] = useState<LngLat | null>(null);
-  const [bounds, setBounds] = useState<LngLatBounds | null>(null);
+  const [center, setCenter] = useState<maplibregl.LngLat | null>(null);
+  const [bounds, setBounds] = useState<maplibregl.LngLatBounds | null>(null);
   const [zoom, setZoom] = useState(0);
 
   useEffect(() => {

@@ -29,9 +29,6 @@ importers:
       lodash.debounce:
         specifier: ^4.0.8
         version: 4.0.8
-      maplibre-gl:
-        specifier: ^5.15.0
-        version: 5.15.0
       react:
         specifier: ^19.2.0
         version: 19.2.3
