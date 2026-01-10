@@ -108,32 +108,46 @@ export default function UploadModal({ handleCloseModal, clickMarker }: UploadMod
             position: fixed;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.4); 
+            background-color: rgba(0, 0, 0, 0.8); 
             display: grid;
             place-content: centre;
+            box-shadow: rgba(0, 0, 0, 0.5);
     `}
     >
       <div
         onClick={(e) => e.stopPropagation()}
         className={css`
-              z-index: 9999;
-              background-color: #fff;
-              padding: 1em;
-              margin: auto auto;
-              min-width: 20em;
-              display: grid;
-              gap: 0.5rem;
-              border-radius: 5px;
-            `}>
-        <p className={css`font-size: 1.2rem;`}>Upload Sunset
-          <button onClick={handleCloseModal} className={css`float:right; padding: 0.2rem 0.3rem; font-size: 0.8rem`}>&#10005;</button>
-        </p>
+          z-index: 9999;
+          background-color: #fff;
+          padding: 1em;
+          margin: auto auto;
+          min-width: 20em;
+          display: grid;
+          gap: 0.5rem;
+          border-radius: 5px;
+          position: relative;
+        `}
+      >
+        <button
+          onClick={handleCloseModal}
+          className={css`
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            border: none;
+            background: none;
+            cursor: pointer;
+          `}
+        >&#10005;</button>
+        <p className={css`font-size: 1.2rem;`}>Upload Sunset</p>
         <form onSubmit={handleSubmit} className={css`display: grid; gap:0.2rem;`}>
           <input ref={fileRef} type="file" id="sunset" name="sunset" accept="image/png, image/jpeg" required />
-          <button className={css`max-width: 10rem; `}>Upload</button>
-          {uploading && (
-            <Spinner />
-          )}
+          <div className='submit-area'>
+            <button className={css`max-width: 10rem;`}>Upload</button>
+            {uploading && (
+              <Spinner />
+            )}
+          </div>
         </form>
       </div>
     </div>

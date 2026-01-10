@@ -227,8 +227,8 @@ export default function Map() {
             right: 0;
             padding-inline: 0.6rem;
             padding-block: 0.2rem;
-            // padding: 0.2rem;
-            margin: 1rem;
+            margin: 10px;
+            font-size: 1.1rem;
           `}>+</button>
         )
       }
