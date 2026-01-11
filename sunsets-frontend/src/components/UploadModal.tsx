@@ -6,9 +6,10 @@ import Spinner from './Spinner';
 interface UploadModalProps {
   handleCloseModal: () => void;
   clickMarker: maplibregl.Marker | null;
+  addPoint: (point: { id: string, lng: number, lat: number }) => void;
 }
 
-export default function UploadModal({ handleCloseModal, clickMarker }: UploadModalProps) {
+export default function UploadModal({ handleCloseModal, clickMarker, addPoint }: UploadModalProps) {
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [uploading, setUploading] = useState(false);
 
@@ -79,6 +80,14 @@ export default function UploadModal({ handleCloseModal, clickMarker }: UploadMod
                 alert("upload failed!");
                 throw new Error('Upload to S3 failed');
               } else {
+                if (clickMarker) {
+                  const { lng, lat } = clickMarker.getLngLat();
+                  addPoint({
+                    id: fields.key,
+                    lng: Number(lng.toPrecision(8)),
+                    lat: Number(lat.toPrecision(8))
+                  });
+                }
                 alert("image uploaded!");
               }
               handleCloseModal();

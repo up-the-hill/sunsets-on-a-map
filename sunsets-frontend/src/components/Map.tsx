@@ -35,6 +35,48 @@ export default function Map() {
   const [clickMarker, setClickMarker] = useState<null | maplibregl.Marker>(null);
   const [displayUploadModal, setDisplayUploadModal] = useState(false);
 
+  const addPoint = (point: { id: string, lng: number, lat: number }) => {
+    if (!mapInstance) return;
+
+    // Create a DOM element for the marker
+    const el = document.createElement('div');
+    el.className = css`
+      width: 16px;
+      height: 16px;
+      background-color: var(--golden-pollen);
+      border-radius: 50%;
+      border: 1px solid var(--charcoal-brown);
+      cursor: pointer;
+    `;
+
+    // handle click on temporary marker
+    el.addEventListener('click', (e) => {
+      e.stopPropagation();
+
+      const popupNode = document.createElement('div');
+      const root = createRoot(popupNode);
+
+      new window.maplibregl.Popup()
+        .setLngLat([point.lng, point.lat])
+        .setDOMContent(popupNode)
+        .addTo(mapInstance);
+
+      root.render(<SunsetPopup id={point.id} />);
+    });
+
+    // add temporary marker to map
+    new window.maplibregl.Marker({ element: el })
+      .setLngLat([point.lng, point.lat])
+      .addTo(mapInstance);
+
+    // remove click marker
+    if (clickMarkerRef.current) {
+      clickMarkerRef.current.remove();
+      clickMarkerRef.current = null;
+      setClickMarker(null);
+    }
+  };
+
   useEffect(() => {
     const map = new window.maplibregl.Map({
       container: 'map', // container id
@@ -141,13 +183,6 @@ export default function Map() {
         const coordinates = (e.features![0].geometry as any).coordinates.slice();
         const id = e.features![0].properties.id;
 
-        // Ensure that if the map is zoomed out such that
-        // multiple copies of the feature are visible, the
-        // popup appears over the copy being pointed to.
-        // while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-        //   coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-        // }
-
         const popupNode = document.createElement('div');
         const root = createRoot(popupNode);
 
@@ -234,7 +269,7 @@ export default function Map() {
       }
       {
         displayUploadModal && (
-          <UploadModal handleCloseModal={handleCloseModal} clickMarker={clickMarker} />
+          <UploadModal handleCloseModal={handleCloseModal} clickMarker={clickMarker} addPoint={addPoint} />
         )
       }
       <div id="map" className={css`
