@@ -6,8 +6,7 @@ import { createRoot } from 'react-dom/client';
 import Debug from './Debug';
 
 // maplibregl-js
-// import maplibregl, { Popup, GeoJSONSource } from 'maplibre-gl';
-// import { Marker } from 'maplibre-gl';
+import maplibregl, { Popup, GeoJSONSource, Marker } from 'maplibre-gl';
 
 // stadia maps search
 import { MapLibreSearchControl } from "@stadiamaps/maplibre-search-box";
@@ -20,7 +19,7 @@ async function loadPoints(map: maplibregl.Map) {
     const res = await fetch(`/api/sunsets`);
     const data = await res.json();
 
-    const source = map.getSource('sunsets') as maplibregl.GeoJSONSource;
+    const source = map.getSource('sunsets') as GeoJSONSource;
     if (source) {
       source.setData(data);
     }
@@ -31,8 +30,8 @@ async function loadPoints(map: maplibregl.Map) {
 
 export default function Map() {
   const [mapInstance, setMapInstance] = useState<null | maplibregl.Map>(null);
-  const clickMarkerRef = useRef<null | maplibregl.Marker>(null);
-  const [clickMarker, setClickMarker] = useState<null | maplibregl.Marker>(null);
+  const clickMarkerRef = useRef<null | Marker>(null);
+  const [clickMarker, setClickMarker] = useState<null | Marker>(null);
   const [displayUploadModal, setDisplayUploadModal] = useState(false);
 
   const addPoint = (point: { id: string, lng: number, lat: number }) => {
@@ -56,7 +55,7 @@ export default function Map() {
       const popupNode = document.createElement('div');
       const root = createRoot(popupNode);
 
-      new window.maplibregl.Popup()
+      new Popup()
         .setLngLat([point.lng, point.lat])
         .setDOMContent(popupNode)
         .addTo(mapInstance);
@@ -65,7 +64,7 @@ export default function Map() {
     });
 
     // add temporary marker to map
-    new window.maplibregl.Marker({ element: el })
+    new Marker({ element: el })
       .setLngLat([point.lng, point.lat])
       .addTo(mapInstance);
 
@@ -78,7 +77,7 @@ export default function Map() {
   };
 
   useEffect(() => {
-    const map = new window.maplibregl.Map({
+    const map = new maplibregl.Map({
       container: 'map', // container id
       style: '/styles/sunset',
       center: [151.2057, -33.8727],
@@ -167,7 +166,7 @@ export default function Map() {
           layers: ['clusters']
         });
         const clusterId = features[0].properties.cluster_id;
-        const source = map.getSource('sunsets') as maplibregl.GeoJSONSource;
+        const source = map.getSource('sunsets') as GeoJSONSource;
 
         const zoom = await source.getClusterExpansionZoom(clusterId);
         map.easeTo({
@@ -186,7 +185,7 @@ export default function Map() {
         const popupNode = document.createElement('div');
         const root = createRoot(popupNode);
 
-        new window.maplibregl.Popup()
+        new Popup()
           .setLngLat(coordinates)
           .setDOMContent(popupNode)
           .addTo(map);
@@ -226,7 +225,7 @@ export default function Map() {
           clickMarkerRef.current.remove();
         }
 
-        const newMarker = new window.maplibregl.Marker()
+        const newMarker = new Marker()
           .setLngLat(e.lngLat)
           .addTo(map);
 

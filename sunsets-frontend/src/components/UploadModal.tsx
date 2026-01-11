@@ -2,10 +2,11 @@ import { css } from '@linaria/core';
 import { useRef, useState, type FormEvent } from 'react';
 import Compressor from 'compressorjs';
 import Spinner from './Spinner';
+import { Marker } from 'maplibre-gl';
 
 interface UploadModalProps {
   handleCloseModal: () => void;
-  clickMarker: maplibregl.Marker | null;
+  clickMarker: Marker | null;
   addPoint: (point: { id: string, lng: number, lat: number }) => void;
 }
 
