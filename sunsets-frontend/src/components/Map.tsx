@@ -7,6 +7,7 @@ import Debug from './Debug';
 
 // maplibregl-js
 import maplibregl, { Popup, GeoJSONSource, Marker } from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css'
 
 // stadia maps search
 import { MapLibreSearchControl } from "@stadiamaps/maplibre-search-box";
