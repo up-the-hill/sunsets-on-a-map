@@ -9,7 +9,11 @@ function App() {
         @media (min-width: 720px) {
           display: block;
           position: fixed;
-          left: 40dvw;
+          left: 50%;
+          transform: translateX(-50%);
+          text-shadow: 
+            0 0 10px var(--honeydew),
+            0 0 10px var(--honeydew);
           z-index: 999;
           margin: 1rem;
           line-height: 1em;
