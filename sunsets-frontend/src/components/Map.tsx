@@ -86,7 +86,7 @@ export default function Map() {
     });
     setMapInstance(map);
 
-    const control = new MapLibreSearchControl({
+    const searchControl = new MapLibreSearchControl({
       searchOnEnter: true,
       minWaitPeriodMs: 800,
       // onResultSelected: feature => {
@@ -98,7 +98,25 @@ export default function Map() {
     });
 
     map.on('load', async () => {
-      map.addControl(control, "top-left");
+      map.addControl(searchControl, "top-left");
+      // Initialize the geolocate control.
+      const geolocate = new maplibregl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true
+        },
+        trackUserLocation: true
+      });
+      // Add the control to the map.
+      map.addControl(geolocate);
+      // Set an event listener that fires
+      // when an error event occurs.
+      geolocate.on('error', () => {
+        map.removeControl(geolocate);
+        map.addControl(geolocate);
+        alert('Error finding user location, please turn on GPS');
+      });
+
+      geolocate.trigger();
       map.addSource('sunsets', {
         type: 'geojson',
         data: {
@@ -258,13 +276,26 @@ export default function Map() {
         clickMarker && (
           <button onClick={handleShowModal} className={css`
             position: absolute;
+            display: grid;
+            place-items: center;
+            height: 33px;
+            width: 33px;
             z-index: 999;
             right: 0;
-            padding-inline: 0.6rem;
-            padding-block: 0.2rem;
-            margin: 10px;
-            font-size: 1.1rem;
-          `}>+</button>
+            margin: 8px 50px;
+            font-size: 1.6rem;
+            background-color: #fff;
+            border-radius: 5px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+            background-clip: padding-box; 
+            padding: 0.5rem;
+            cursor: pointer;
+            &:hover {
+              background-color: #f0f0f0;
+            }
+          `}>
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" stroke='#333' strokeWidth='2' strokeLinecap='round'> <path d="M 5 1 L 5 9 M 1 5 L 9 5"></path></svg>
+          </button>
         )
       }
       {
