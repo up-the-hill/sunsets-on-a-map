@@ -1,5 +1,5 @@
 import { css } from '@linaria/core';
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const footerStyle = css`
   position: fixed;
@@ -15,6 +15,11 @@ const footerStyle = css`
   align-items: center;
   font-family: sans-serif;
   color: #333;
+
+  .attribution {
+    color: #666;
+    margin-right: 5px;
+  }
 
   a {
     color: #333;
@@ -81,6 +86,16 @@ export default function Footer() {
   return (
     <>
       <div className={footerStyle}>
+        <div className="attribution">
+          <a href="https://maplibre.org" target="_blank" rel="noopener noreferrer">MapLibre</a>
+          {' | '}
+          <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>
+          {' © '}
+          <a href="https://www.openmaptiles.org" target="_blank" rel="noopener noreferrer">OpenMapTiles</a>
+          {' Data from '}
+          <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>
+        </div>
+        <span>|</span>
         <a href="https://github.com/up-the-hill/sunsets-on-a-map" target="_blank" rel="noopener noreferrer">
           GitHub
         </a>
