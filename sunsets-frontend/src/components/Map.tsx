@@ -82,6 +82,7 @@ export default function Map() {
       container: 'map', // container id
       style: '/styles/sunset',
       center: [151.2057, -33.8727],
+      attributionControl: false,
       zoom: 12
     });
     setMapInstance(map);

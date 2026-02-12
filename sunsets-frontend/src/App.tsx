@@ -1,5 +1,6 @@
 import { css } from '@linaria/core';
 import Map from './components/Map';
+import Footer from './components/Footer';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         }
       `}>sunsets on a map</h1>
       <Map />
+      <Footer />
     </main>
   )
 }
