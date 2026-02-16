@@ -38,11 +38,24 @@ const contentStyle = css`
   font-size: 0.75rem;
   color: #333;
 
+  @media (max-width: 600px) {
+    flex-wrap: wrap;
+    max-width: calc(100vw - 60px);
+    justify-content: flex-end;
+  }
+
   .attribution {
     color: #666;
     margin-right: 5px;
     display: flex;
     gap: 4px;
+
+    @media (max-width: 600px) {
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      margin-right: 0px;
+    }
+
     a {
       color: #666;
       font-weight: normal;
@@ -105,7 +118,7 @@ const modalContentStyle = css`
 
 export default function Footer() {
   const [showPrivacy, setShowPrivacy] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   return (
     <>
