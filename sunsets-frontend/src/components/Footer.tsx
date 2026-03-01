@@ -30,44 +30,27 @@ const toggleButtonStyle = css`
 
 const contentStyle = css`
   background: rgba(255, 255, 255, 0.8);
-  padding: 5px 15px 5px 5px;
+  padding: 5px;
   display: flex;
-  gap: 10px;
-  align-items: center;
-  font-family: sans-serif;
+  gap: 4px;
   font-size: 0.75rem;
   color: #333;
 
   @media (max-width: 600px) {
     flex-wrap: wrap;
-    max-width: calc(100vw - 60px);
     justify-content: flex-end;
   }
 
   .attribution {
     color: #666;
-    margin-right: 5px;
-    display: flex;
-    gap: 4px;
 
     @media (max-width: 600px) {
-      flex-wrap: wrap;
-      justify-content: flex-end;
-      margin-right: 0px;
+      text-align: right;
     }
 
     a {
       color: #666;
       font-weight: normal;
-    }
-  }
-
-  a {
-    color: #333;
-    text-decoration: none;
-    font-weight: bold;
-    &:hover {
-      text-decoration: underline;
     }
   }
 
@@ -137,11 +120,11 @@ export default function Footer() {
           <div className={contentStyle}>
             <div className="attribution">
               <a href="https://maplibre.org" target="_blank" rel="noopener noreferrer">MapLibre</a>
-              <span>|</span>
+              <span> | </span>
               <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>
-              <span>©</span>
+              <span> © </span>
               <a href="https://www.openmaptiles.org" target="_blank" rel="noopener noreferrer">OpenMapTiles</a>
-              <span>Data from</span>
+              <span> Data from </span>
               <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>
             </div>
             <span>|</span>
