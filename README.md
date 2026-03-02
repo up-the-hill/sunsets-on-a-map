@@ -2,6 +2,8 @@
 
 A full-stack web app for mapping sunsets.
 
+![screenshot of sunsets-on-a-map website](./assets/sunsets.png)
+
 ## Tech Stack
 
 ### Frontend
