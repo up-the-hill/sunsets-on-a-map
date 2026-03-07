@@ -3,6 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { serve } from '@hono/node-server'
 import { serveStatic } from '@hono/node-server/serve-static'
 import { Hono } from 'hono'
+import { secureHeaders } from 'hono/secure-headers'
+import { rateLimiter } from 'hono-rate-limiter'
+import { bodyLimit } from 'hono/body-limit'
 import { sunsetsTable } from './db/schema.js';
 import { db } from './db/db.js';
 import { s3Client } from './aws.js';
@@ -79,6 +82,17 @@ function parseLngLatPair(str: string | undefined) {
 // main
 const app = new Hono()
 
+app.use('*', secureHeaders())
+
+const limiter = rateLimiter({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100,               // Limit each IP to 100 requests per window
+  standardHeaders: 'draft-7', // Return rate limit info in the `RateLimit-*` headers
+  keyGenerator: (c) => c.req.header('x-forwarded-for') ?? '', // Identify users behind proxy
+})
+
+app.use('/api/*', limiter)
+
 type formData = {
   longitude: number,
   latitude: number,
@@ -132,8 +146,16 @@ app.get('/api/sunsets/:id', async (c) => {
 })
 
 // upload image
-app.post('/api/sunsets', async (c) => {
-  let fd: formData = await c.req.parseBody() as any;
+app.post(
+  '/api/sunsets',
+  bodyLimit({
+    maxSize: 10 * 1024 * 1024, // 10MB
+    onError: (c) => {
+      return c.text('Payload Too Large', 413)
+    },
+  }),
+  async (c) => {
+    let fd: formData = await c.req.parseBody() as any;
 
   // check if image is a sunset
   const file = fd.file;
