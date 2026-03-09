@@ -86,6 +86,7 @@ export default function Map() {
       zoom: 12
     });
     setMapInstance(map);
+    map.addControl(new maplibregl.AttributionControl(), 'bottom-left');
 
     const searchControl = new MapLibreSearchControl({
       searchOnEnter: true,

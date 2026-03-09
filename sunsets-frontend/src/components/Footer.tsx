@@ -46,6 +46,8 @@ const contentStyle = css`
 
     @media (max-width: 600px) {
       text-align: right;
+      width: fit-content;
+      margin-left: auto;
     }
 
     a {
@@ -118,15 +120,6 @@ export default function Footer() {
 
         {!isCollapsed && (
           <div className={contentStyle}>
-            <div className="attribution">
-              <a href="https://maplibre.org" target="_blank" rel="noopener noreferrer">MapLibre</a>
-              <span> | </span>
-              <a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a>
-              <span> © </span>
-              <a href="https://www.openmaptiles.org" target="_blank" rel="noopener noreferrer">OpenMapTiles</a>
-              <span> Data from </span>
-              <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>
-            </div>
             <span>|</span>
             <a href="https://github.com/up-the-hill/sunsets-on-a-map" target="_blank" rel="noopener noreferrer">
               GitHub
