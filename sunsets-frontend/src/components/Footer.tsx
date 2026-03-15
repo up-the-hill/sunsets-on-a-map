@@ -120,7 +120,6 @@ export default function Footer() {
 
         {!isCollapsed && (
           <div className={contentStyle}>
-            <span>|</span>
             <a href="https://github.com/up-the-hill/sunsets-on-a-map" target="_blank" rel="noopener noreferrer">
               GitHub
             </a>
