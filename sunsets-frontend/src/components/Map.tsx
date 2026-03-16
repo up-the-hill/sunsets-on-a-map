@@ -262,6 +262,10 @@ export default function Map() {
   }, [])
 
   function handleShowModal() {
+    if (!clickMarker) {
+      alert("Please drop a marker on the map first.");
+      return;
+    }
     setDisplayUploadModal(true);
   }
 
@@ -274,32 +278,28 @@ export default function Map() {
       {IS_DEV && (
         <Debug map={mapInstance}></Debug>
       )}
-      {
-        clickMarker && (
-          <button onClick={handleShowModal} className={css`
-            position: absolute;
-            display: grid;
-            place-items: center;
-            height: 33px;
-            width: 33px;
-            z-index: 999;
-            right: 0;
-            margin: 8px 50px;
-            font-size: 1.6rem;
-            background-color: #fff;
-            border-radius: 5px;
-            border: 2px solid rgba(0, 0, 0, 0.1);
-            background-clip: padding-box; 
-            padding: 0.5rem;
-            cursor: pointer;
-            &:hover {
-              background-color: #f0f0f0;
-            }
-          `}>
-            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" stroke='#333' strokeWidth='2' strokeLinecap='round'> <path d="M 5 1 L 5 9 M 1 5 L 9 5"></path></svg>
-          </button>
-        )
-      }
+      <button onClick={handleShowModal} aria-label="Add Point" title="Add Point" className={css`
+        position: absolute;
+        display: grid;
+        place-items: center;
+        height: 33px;
+        width: 33px;
+        z-index: 999;
+        right: 0;
+        margin: 8px 50px;
+        font-size: 1.6rem;
+        background-color: #fff;
+        border-radius: 5px;
+        border: 2px solid rgba(0, 0, 0, 0.1);
+        background-clip: padding-box; 
+        padding: 0.5rem;
+        cursor: pointer;
+        &:hover {
+          background-color: #f0f0f0;
+        }
+      `}>
+        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" stroke='#333' strokeWidth='2' strokeLinecap='round'> <path d="M 5 1 L 5 9 M 1 5 L 9 5"></path></svg>
+      </button>
       {
         displayUploadModal && (
           <UploadModal handleCloseModal={handleCloseModal} clickMarker={clickMarker} addPoint={addPoint} />
