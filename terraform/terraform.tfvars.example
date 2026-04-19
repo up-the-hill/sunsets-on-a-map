@@ -1,0 +1,9 @@
+# Path to your public SSH key
+hcloud_ssh_key_path = "~/.ssh/id_rsa.pub"
+
+# Hetzner Server Configuration
+hcloud_server_type = "cx22"
+hcloud_location    = "nbg1"
+
+# AWS Region
+aws_region = "eu-north-1"
