@@ -147,7 +147,7 @@ resource "hcloud_server" "sunsets_vps" {
     #cloud-config
     runcmd:
       - apt-get update
-      - apt-get install -y docker.io docker-compose
+      - apt-get install -y docker.io docker-compose git
       - systemctl start docker
       - systemctl enable docker
   EOT

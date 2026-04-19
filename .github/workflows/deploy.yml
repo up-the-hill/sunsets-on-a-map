@@ -1,4 +1,4 @@
-name: Terraform CI/CD
+name: CI/CD Pipeline (Infra & App)
 
 on:
   push:
@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - 'terraform/**'
+      - 'sunsets-backend/**'
+      - 'sunsets-frontend/**'
+      - 'docker-compose.yml'
   pull_request:
     branches:
       - main
@@ -57,3 +60,36 @@ jobs:
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve -no-color
+
+      - name: Get VPS IP
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        id: vps_ip
+        run: echo "vps_ip=$(terraform output -raw vps_ip)" >> $GITHUB_OUTPUT
+
+    outputs:
+      vps_ip: ${{ steps.vps_ip.outputs.vps_ip }}
+
+  deploy:
+    name: Deploy to VPS
+    needs: terraform
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH and Deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ needs.terraform.outputs.vps_ip }}
+          username: root
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            if [ ! -d "sunsets" ]; then
+              git clone https://github.com/${{ github.repository }}.git sunsets
+              cd sunsets
+            else
+              cd sunsets
+              git pull origin main
+            fi
+            # Add environment variables here if needed
+            # echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" > .env
+            # ...
+            docker-compose up -d --build
