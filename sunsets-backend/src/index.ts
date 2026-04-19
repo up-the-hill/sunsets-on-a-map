@@ -41,7 +41,7 @@ import {
   getSignedUrl,
 } from "@aws-sdk/s3-request-presigner";
 import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
-// import { sql } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 
 
 // s3 helper functions
@@ -103,10 +103,26 @@ type formData = {
 
 app.get('/styles/sunset', serveStatic({ path: './public/sunset_min.json' }))
 
-// old api endpoint, gets all rows from table
+// api endpoint, gets all rows from table as GeoJSON using PostGIS
 app.get('/api/sunsets', async (c) => {
-  const sunsets = await db.select().from(sunsetsTable)
-  return c.json(toGeoJSON(sunsets))
+  const result = await db.execute(sql`
+    SELECT json_build_object(
+      'type', 'FeatureCollection',
+      'features', COALESCE(
+        json_agg(
+          json_build_object(
+            'type', 'Feature',
+            'geometry', ST_AsGeoJSON(geo)::json,
+            'properties', json_build_object('id', id)
+          )
+        ), 
+        '[]'::json
+      )
+    ) as geojson
+    FROM ${sunsetsTable}
+  `);
+  
+  return c.json(result.rows[0].geojson);
 })
 
 // newer location-based queries
