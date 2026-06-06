@@ -121,7 +121,7 @@ app.get('/api/sunsets', async (c) => {
     ) as geojson
     FROM ${sunsetsTable}
   `);
-  
+
   if (!result.rows.length) return c.json({ type: 'FeatureCollection', features: [] });
   return c.json(result.rows[0].geojson);
 })
@@ -174,73 +174,73 @@ app.post(
   async (c) => {
     let fd: formData = await c.req.parseBody() as any;
 
-  const longitude = Number(fd.longitude);
-  const latitude = Number(fd.latitude);
-  if (
-    Number.isNaN(longitude) || Number.isNaN(latitude) ||
-    longitude < -180 || longitude > 180 ||
-    latitude < -90 || latitude > 90
-  ) {
-    c.status(400)
-    return c.text("InvalidCoordinates")
-  }
+    const longitude = Number(fd.longitude);
+    const latitude = Number(fd.latitude);
+    if (
+      Number.isNaN(longitude) || Number.isNaN(latitude) ||
+      longitude < -180 || longitude > 180 ||
+      latitude < -90 || latitude > 90
+    ) {
+      c.status(400)
+      return c.text("InvalidCoordinates")
+    }
 
-  // check if image is a sunset
-  const file = fd.file;
-  const imageBuffer = Buffer.from(await file.arrayBuffer());
-  const input = await preprocessBuffer(imageBuffer).catch(() => null);
-  if (!input) {
-    c.status(400)
-    return c.text("InvalidImage")
-  }
+    // check if image is a sunset
+    const file = fd.file;
+    const imageBuffer = Buffer.from(await file.arrayBuffer());
+    const input = await preprocessBuffer(imageBuffer).catch(() => null);
+    if (!input) {
+      c.status(400)
+      return c.text("InvalidImage")
+    }
 
-  let prediction = (model.predict(input) as tf.Tensor).squeeze();
-  let highestIndex = prediction.argMax().arraySync() as number;
-  let predictionArray = prediction.arraySync() as number[];
-  // console.log('Prediction: ' + highestIndex + ' with ' + Math.floor(predictionArray[highestIndex] * 100) + '% confidence')
-  // console.log(predictionArray[highestIndex])
+    let prediction = (model.predict(input) as tf.Tensor).squeeze();
+    let highestIndex = prediction.argMax().arraySync() as number;
+    let predictionArray = prediction.arraySync() as number[];
+    // console.log('Prediction: ' + highestIndex + ' with ' + Math.floor(predictionArray[highestIndex] * 100) + '% confidence')
+    // console.log(predictionArray[highestIndex])
 
-  // if not sunset return error
-  if (highestIndex === 0) {
-    c.status(400)
-    return c.text("ImageNotSunset")
-  }
+    // if not sunset return error
+    if (highestIndex === 0) {
+      c.status(400)
+      return c.text("ImageNotSunset")
+    }
 
-  // if sunset with less than 90% confidence, return error
-  if (highestIndex === 1 && predictionArray[highestIndex] < 0.9) {
-    c.status(400)
-    return c.text("ImageNotSunset")
-  }
+    // if sunset with less than 80% confidence, return error
+    if (highestIndex === 1 && predictionArray[highestIndex] < 0.8) {
+      c.status(400)
+      return c.text("ImageNotSunset")
+    }
 
-  try {
-    // generate a uuidv4
-    let uuid = uuidv4();
+    try {
+      // generate a uuidv4
+      let uuid = uuidv4();
 
-    // create s3 presigned POST
-    const { url, fields } = await createPresignedPost(s3Client, {
-      Bucket: process.env.AWS_BUCKET_NAME!,
-      Key: uuid,
-      Conditions: [
-        ["content-length-range", 0, 5242880], // up to 5 MB
-      ],
-      Expires: 3600,
-    });
+      // create s3 presigned POST
+      const { url, fields } = await createPresignedPost(s3Client, {
+        Bucket: process.env.AWS_BUCKET_NAME!,
+        Key: uuid,
+        Conditions: [
+          ["content-length-range", 0, 5242880], // up to 5 MB
+        ],
+        Expires: 3600,
+      });
 
-    const s: typeof sunsetsTable.$inferInsert = {
-      id: uuid,
-      geo: [longitude, latitude],
-    };
+      const s: typeof sunsetsTable.$inferInsert = {
+        id: uuid,
+        geo: [longitude, latitude],
+      };
 
-    await db.insert(sunsetsTable).values(s)
+      await db.insert(sunsetsTable).values(s)
 
-    c.status(201)
-    return c.json({ url, fields })
-  } catch (e) {
-    console.error(e)
-    c.status(500)
-    return c.text("Internal Server Error")
-  }
-})
+      c.status(201)
+      return c.json({ url, fields })
+    } catch (e) {
+      console.error(e)
+      c.status(500)
+      return c.text("Internal Server Error")
+    }
+  })
 
 serve({
   fetch: app.fetch,
