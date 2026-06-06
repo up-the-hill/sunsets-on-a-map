@@ -271,6 +271,11 @@ export default function Map() {
 
   function handleCloseModal() {
     setDisplayUploadModal(false);
+    if (clickMarkerRef.current) {
+      clickMarkerRef.current.remove();
+      clickMarkerRef.current = null;
+      setClickMarker(null);
+    }
   }
 
   return (

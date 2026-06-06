@@ -88,7 +88,7 @@ const limiter = rateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   limit: 100,               // Limit each IP to 100 requests per window
   standardHeaders: 'draft-7', // Return rate limit info in the `RateLimit-*` headers
-  keyGenerator: (c) => c.req.header('x-forwarded-for') ?? '', // Identify users behind proxy
+  keyGenerator: (c) => c.req.header('x-forwarded-for')?.split(',')[0].trim() ?? c.req.header('x-real-ip') ?? 'unknown',
 })
 
 app.use('/api/*', limiter)
@@ -122,6 +122,7 @@ app.get('/api/sunsets', async (c) => {
     FROM ${sunsetsTable}
   `);
   
+  if (!result.rows.length) return c.json({ type: 'FeatureCollection', features: [] });
   return c.json(result.rows[0].geojson);
 })
 
@@ -165,7 +166,7 @@ app.get('/api/sunsets/:id', async (c) => {
 app.post(
   '/api/sunsets',
   bodyLimit({
-    maxSize: 10 * 1024 * 1024, // 10MB
+    maxSize: 5 * 1024 * 1024, // 5MB — matches S3 presigned POST limit
     onError: (c) => {
       return c.text('Payload Too Large', 413)
     },
@@ -173,10 +174,25 @@ app.post(
   async (c) => {
     let fd: formData = await c.req.parseBody() as any;
 
+  const longitude = Number(fd.longitude);
+  const latitude = Number(fd.latitude);
+  if (
+    Number.isNaN(longitude) || Number.isNaN(latitude) ||
+    longitude < -180 || longitude > 180 ||
+    latitude < -90 || latitude > 90
+  ) {
+    c.status(400)
+    return c.text("InvalidCoordinates")
+  }
+
   // check if image is a sunset
   const file = fd.file;
   const imageBuffer = Buffer.from(await file.arrayBuffer());
-  const input = await preprocessBuffer(imageBuffer);
+  const input = await preprocessBuffer(imageBuffer).catch(() => null);
+  if (!input) {
+    c.status(400)
+    return c.text("InvalidImage")
+  }
 
   let prediction = (model.predict(input) as tf.Tensor).squeeze();
   let highestIndex = prediction.argMax().arraySync() as number;
@@ -212,7 +228,7 @@ app.post(
 
     const s: typeof sunsetsTable.$inferInsert = {
       id: uuid,
-      geo: [fd.longitude, fd.latitude],
+      geo: [longitude, latitude],
     };
 
     await db.insert(sunsetsTable).values(s)

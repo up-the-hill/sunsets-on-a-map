@@ -4,7 +4,6 @@ export default function Spinner() {
   return (
     <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg" className={css`
       stroke-width: 2px;
-      height: 20px;
       width: 20px;
       stroke-dasharray: 16px;
       stroke-linecap: round;

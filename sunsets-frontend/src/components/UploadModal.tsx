@@ -31,8 +31,8 @@ export default function UploadModal({ handleCloseModal, clickMarker, addPoint }:
         const formData = new FormData();
         if (clickMarker) {
           const { lng, lat } = clickMarker.getLngLat();
-          formData.append('longitude', lng.toPrecision(8));
-          formData.append('latitude', lat.toPrecision(8));
+          formData.append('longitude', lng.toFixed(8));
+          formData.append('latitude', lat.toFixed(8));
           formData.append("file", result);
         }
 
@@ -85,8 +85,8 @@ export default function UploadModal({ handleCloseModal, clickMarker, addPoint }:
                   const { lng, lat } = clickMarker.getLngLat();
                   addPoint({
                     id: fields.key,
-                    lng: Number(lng.toPrecision(8)),
-                    lat: Number(lat.toPrecision(8))
+                    lng: Number(lng.toFixed(8)),
+                    lat: Number(lat.toFixed(8))
                   });
                 }
                 alert("image uploaded!");
