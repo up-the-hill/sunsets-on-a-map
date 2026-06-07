@@ -1,17 +1,17 @@
-FROM node:jod-trixie-slim
+FROM node:24-trixie-slim
 
 WORKDIR /app
 
-# Install build dependencies for native modules
-RUN apt-get update && apt-get install -y python3 make g++ curl
+RUN apt-get update && apt-get install -y python3 make g++ curl && \
+    npm install -g pnpm
 
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
-RUN npm run build
+RUN pnpm run build
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start"]
+CMD ["pnpm", "run", "start"]

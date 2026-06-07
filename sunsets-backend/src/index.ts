@@ -9,26 +9,24 @@ import { bodyLimit } from 'hono/body-limit'
 import { sunsetsTable } from './db/schema.js';
 import { db } from './db/db.js';
 import { s3Client } from './aws.js';
-import { toGeoJSON } from './utility.js';
-import * as tf from '@tensorflow/tfjs-node';
+import * as ort from 'onnxruntime-node';
+import sharp from 'sharp';
 
-const model = await tf.loadLayersModel('file://public/sunsets-model/model.json');
+const session = await ort.InferenceSession.create('public/sunsets-model/model.onnx');
 
-async function preprocessBuffer(imageBuffer: Buffer) {
-  const decoded = tf.node.decodeImage(imageBuffer, 3);
+async function preprocessBuffer(imageBuffer: Buffer): Promise<ort.Tensor> {
+  const raw = await sharp(imageBuffer)
+    .resize(224, 224)
+    .removeAlpha()
+    .raw()
+    .toBuffer();
 
-  const out = tf.tidy(() => {
-    const resized = tf.image.resizeBilinear(decoded, [224, 224]);
-    const floatImg = resized.toFloat();
-    const normalized = floatImg.div(127.5).sub(1.0);
-    const batched = normalized.expandDims(0);
+  const float32 = new Float32Array(224 * 224 * 3);
+  for (let i = 0; i < raw.length; i++) {
+    float32[i] = raw[i] / 127.5 - 1.0; // MobileNetV2 normalisation
+  }
 
-    return batched;
-  });
-
-  decoded.dispose();
-
-  return out; // caller must dispose: out.dispose()
+  return new ort.Tensor('float32', float32, [1, 224, 224, 3]);
 }
 
 // s3 imports
@@ -194,20 +192,12 @@ app.post(
       return c.text("InvalidImage")
     }
 
-    let prediction = (model.predict(input) as tf.Tensor).squeeze();
-    let highestIndex = prediction.argMax().arraySync() as number;
-    let predictionArray = prediction.arraySync() as number[];
-    // console.log('Prediction: ' + highestIndex + ' with ' + Math.floor(predictionArray[highestIndex] * 100) + '% confidence')
-    // console.log(predictionArray[highestIndex])
+    const results = await session.run({ [session.inputNames[0]]: input });
+    const predictionArray = Array.from(results[session.outputNames[0]].data as Float32Array);
+    const highestIndex = predictionArray.indexOf(Math.max(...predictionArray));
 
     // if not sunset return error
-    if (highestIndex === 0) {
-      c.status(400)
-      return c.text("ImageNotSunset")
-    }
-
-    // if sunset with less than 80% confidence, return error
-    if (highestIndex === 1 && predictionArray[highestIndex] < 0.8) {
+    if (highestIndex !== 1) {
       c.status(400)
       return c.text("ImageNotSunset")
     }

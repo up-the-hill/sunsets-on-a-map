@@ -24,7 +24,7 @@ services:
       - .env
     environment:
       - DATABASE_URL=${DATABASE_URL}
-    command: sh -c "npx drizzle-kit push && npm run start"
+    command: sh -c "pnpm drizzle-kit push && pnpm run start"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3000/styles/sunset"]
       interval: 10s
@@ -43,6 +43,11 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O- http://localhost/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   certbot:
     image: certbot/certbot
