@@ -1,11 +1,11 @@
 # Stage 1: Build
-FROM node:jod-trixie-slim AS builder
+FROM node:24-trixie-slim AS builder
 
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
 # Installing pnpm
-RUN npm install -g pnpm
+RUN corepack enable pnpm
 RUN pnpm install
 
 COPY . .
