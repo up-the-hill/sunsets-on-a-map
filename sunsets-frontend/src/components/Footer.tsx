@@ -11,30 +11,31 @@ const footerContainerStyle = css`
 `;
 
 const toggleButtonStyle = css`
-  background: rgba(255, 255, 255, 0.8);
-  border: none;
-  border-top-left-radius: 8px;
+  background: var(--honeydew);
+  border: 1px solid var(--charcoal-brown);
   cursor: pointer;
-  padding: 4px 10px;
+  padding: 4px 4px;
   font-size: 1rem;
-  color: #555;
+  color: var(--charcoal-brown);
   display: flex;
   align-items: center;
   justify-content: center;
 
   &:hover {
-    color: #000;
-    background: rgba(255, 255, 255, 0.95);
+    background: #e6f0e2;
   }
 `;
 
 const contentStyle = css`
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--honeydew);
+  border: 1px solid var(--charcoal-brown);
+  border-right: none;
   padding: 5px;
   display: flex;
+  align-items: center;
   gap: 4px;
   font-size: 0.75rem;
-  color: #333;
+  color: var(--charcoal-brown);
 
   @media (max-width: 600px) {
     flex-wrap: wrap;
@@ -42,7 +43,7 @@ const contentStyle = css`
   }
 
   .attribution {
-    color: #666;
+    color: var(--charcoal-brown);
 
     @media (max-width: 600px) {
       text-align: right;
@@ -51,9 +52,13 @@ const contentStyle = css`
     }
 
     a {
-      color: #666;
+      color: var(--charcoal-brown);
       font-weight: normal;
     }
+  }
+
+  a {
+    color: var(--charcoal-brown);
   }
 
   button.link-button {
@@ -63,9 +68,9 @@ const contentStyle = css`
     font: inherit;
     cursor: pointer;
     text-decoration: underline;
-    color: #555;
+    color: var(--charcoal-brown);
     &:hover {
-      color: #000;
+      opacity: 0.7;
     }
   }
 `;
@@ -84,20 +89,26 @@ const modalOverlayStyle = css`
 `;
 
 const modalContentStyle = css`
-  background: white;
+  background: var(--honeydew);
+  color: var(--charcoal-brown);
+  border: 1px solid var(--charcoal-brown);
   padding: 20px;
-  border-radius: 8px;
   max-width: 400px;
   position: relative;
 
   button.close {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 8px;
+    right: 8px;
     background: none;
     border: none;
+    color: var(--charcoal-brown);
     font-size: 1.2rem;
+    line-height: 1;
     cursor: pointer;
+    &:hover {
+      opacity: 0.6;
+    }
   }
 `;
 
@@ -130,7 +141,21 @@ export default function Footer() {
               <path d="M12 8h.01" />
             </svg>
           ) : (
-            "»"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m7 7l5 5l-5 5m6-10l5 5l-5 5"
+              />
+            </svg>
           )}
         </button>
 

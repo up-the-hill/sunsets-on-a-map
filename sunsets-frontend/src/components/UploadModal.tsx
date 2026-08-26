@@ -16,6 +16,7 @@ export default function UploadModal({
   addPoint,
 }: UploadModalProps) {
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState<{
     text: string;
@@ -163,6 +164,9 @@ export default function UploadModal({
           display: grid;
           gap: 0.5rem;
           border-radius: 5px;
+          border: 1px solid var(--charcoal-brown);
+          border-radius: 0;
+          background-color: var(--honeydew);
           position: relative;
         `}
       >
@@ -170,11 +174,17 @@ export default function UploadModal({
           onClick={handleCloseModal}
           className={css`
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 8px;
+            right: 8px;
             border: none;
             background: none;
+            font-size: 1.1rem;
+            line-height: 1;
+            color: var(--charcoal-brown);
             cursor: pointer;
+            &:hover {
+              opacity: 0.6;
+            }
           `}
         >
           &#10005;
@@ -182,6 +192,7 @@ export default function UploadModal({
         <p
           className={css`
             font-size: 1.2rem;
+            font-family: serif;
           `}
         >
           Upload Sunset
@@ -193,6 +204,7 @@ export default function UploadModal({
             gap: 0.2rem;
           `}
         >
+          {/* native file input, visually hidden but still keyboard/validation reachable */}
           <input
             ref={fileRef}
             type="file"
@@ -200,12 +212,46 @@ export default function UploadModal({
             name="sunset"
             accept="image/png, image/jpeg"
             required
+            onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
+            className={css`
+              position: absolute;
+              width: 1px;
+              height: 1px;
+              padding: 0;
+              overflow: hidden;
+              clip: rect(0 0 0 0);
+              white-space: nowrap;
+            `}
           />
+          <label
+            htmlFor="sunset"
+            className={css`
+              display: inline-block;
+              max-width: 100%;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              background-color: var(--honeydew);
+              border: 1px solid var(--charcoal-brown);
+              padding: 0.3rem 0.6rem;
+              cursor: pointer;
+              &:hover {
+                background-color: #e6f0e2;
+              }
+            `}
+          >
+            {fileName ?? "Choose a photo…"}
+          </label>
           <div className="submit-area">
             <button
               disabled={uploading}
               className={css`
                 max-width: 10rem;
+                background-color: var(--honeydew);
+                border: 1px solid var(--charcoal-brown);
+                border-radius: 0;
+                padding: 0.3rem 0.6rem;
+                cursor: pointer;
               `}
             >
               Upload

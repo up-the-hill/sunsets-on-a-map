@@ -59,7 +59,6 @@ export default function SunsetPopup({ id }: PopupProps) {
     <>
       <div
         className={css`
-          padding: 10px;
           max-width: 200px;
         `}
       >
@@ -70,7 +69,7 @@ export default function SunsetPopup({ id }: PopupProps) {
           className={css`
             width: 100%;
             height: auto;
-            border-radius: 4px;
+            display: block;
             cursor: pointer;
           `}
         />
@@ -99,10 +98,12 @@ export default function SunsetPopup({ id }: PopupProps) {
                 position: absolute;
                 top: 20px;
                 right: 20px;
-                background: none;
-                border: none;
-                color: white;
+                background-color: var(--honeydew);
+                border: 1px solid var(--charcoal-brown);
+                border-radius: 0;
+                color: var(--charcoal-brown);
                 font-size: 2rem;
+                line-height: 1;
                 cursor: pointer;
                 z-index: 1000;
               `}

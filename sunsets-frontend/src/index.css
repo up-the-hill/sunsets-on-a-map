@@ -106,3 +106,42 @@ h6 {
 /* a { */
 /*   text-decoration: none; */
 /* } */
+
+/* Sunset popup box: thin honeydew mat + charcoal frame */
+.maplibregl-popup-content {
+  background-color: var(--honeydew);
+  border: 1px solid var(--charcoal-brown);
+  border-radius: 0;
+  padding: 4px;
+  box-shadow: 2px 2px 0 var(--charcoal-brown);
+}
+/* recolor the little pointer triangle to match (extra class beats maplibre's
+   same-specificity rules, which load after this file) */
+.maplibregl-popup.maplibregl-popup-anchor-top .maplibregl-popup-tip,
+.maplibregl-popup.maplibregl-popup-anchor-top-left .maplibregl-popup-tip,
+.maplibregl-popup.maplibregl-popup-anchor-top-right .maplibregl-popup-tip {
+  border-bottom-color: var(--charcoal-brown);
+}
+.maplibregl-popup.maplibregl-popup-anchor-bottom .maplibregl-popup-tip,
+.maplibregl-popup.maplibregl-popup-anchor-bottom-left .maplibregl-popup-tip,
+.maplibregl-popup.maplibregl-popup-anchor-bottom-right .maplibregl-popup-tip {
+  border-top-color: var(--charcoal-brown);
+}
+.maplibregl-popup.maplibregl-popup-anchor-left .maplibregl-popup-tip {
+  border-right-color: var(--charcoal-brown);
+}
+.maplibregl-popup.maplibregl-popup-anchor-right .maplibregl-popup-tip {
+  border-left-color: var(--charcoal-brown);
+}
+
+/* maplibre control buttons (geolocate, zoom, etc.) */
+/* both classes = higher specificity than maplibre's single-class rules,
+   which load after this file via Map.tsx */
+.maplibregl-ctrl.maplibregl-ctrl-group {
+  background-color: var(--honeydew);
+  border: 1px solid var(--charcoal-brown);
+  border-radius: 0;
+}
+.maplibregl-ctrl.maplibregl-ctrl-group button {
+  background-color: var(--honeydew);
+}

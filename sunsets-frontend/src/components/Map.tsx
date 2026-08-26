@@ -57,7 +57,7 @@ export default function Map() {
       const popupNode = document.createElement("div");
       const root = createRoot(popupNode);
 
-      new Popup()
+      new Popup({ closeButton: false })
         .setLngLat([point.lng, point.lat])
         .setDOMContent(popupNode)
         .addTo(mapInstance);
@@ -210,7 +210,10 @@ export default function Map() {
         const popupNode = document.createElement("div");
         const root = createRoot(popupNode);
 
-        new Popup().setLngLat(coordinates).setDOMContent(popupNode).addTo(map);
+        new Popup({ closeButton: false })
+          .setLngLat(coordinates)
+          .setDOMContent(popupNode)
+          .addTo(map);
 
         root.render(<SunsetPopup id={id} />);
       });
@@ -294,20 +297,20 @@ export default function Map() {
           position: absolute;
           display: grid;
           place-items: center;
-          height: 33px;
-          width: 33px;
+          height: 32px;
+          width: 32px;
           z-index: 999;
           right: 0;
-          margin: 8px 50px;
+          margin: 9px 50px;
           font-size: 1.6rem;
-          background-color: #fff;
-          border-radius: 5px;
-          border: 2px solid rgba(0, 0, 0, 0.1);
+          background-color: var(--honeydew);
+          border-radius: 0;
+          border: 1px solid var(--charcoal-brown);
           background-clip: padding-box;
           padding: 0.5rem;
           cursor: pointer;
           &:hover {
-            background-color: #f0f0f0;
+            background-color: #e6f0e2;
           }
         `}
       >

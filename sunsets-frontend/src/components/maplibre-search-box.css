@@ -14,18 +14,17 @@
 
   .input-container {
     input {
-      border-radius: 100rem;
+      border-radius: 0;
       font-size: 1rem;
       height: 24px;
       padding: 1.2rem 1rem;
       width: 100%;
-      border: none;
+      border: 1px solid var(--charcoal-brown);
       background: var(--honeydew);
-      box-shadow: 0px 0px 4px var(--charcoal-brown);
 
       &:focus {
         outline: none;
-        box-shadow: 0px 0px 4px var(--blaze-orange);
+        border-color: var(--blaze-orange);
       }
     }
 
@@ -84,9 +83,10 @@
 
   .results {
     background: var(--honeydew);
-    border-radius: 5px;
+    border: 1px solid var(--charcoal-brown);
+    border-radius: 0;
     margin: 10px 0;
-    width: 284px;
+    width: 100%;
 
     &.hidden {
       display: none;
@@ -96,11 +96,6 @@
       height: 100%;
       max-height: 500px;
       overflow-y: scroll;
-
-      &:first-child {
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-      }
     }
 
     .result {
