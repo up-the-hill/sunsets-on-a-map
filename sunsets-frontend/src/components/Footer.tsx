@@ -1,5 +1,5 @@
-import { css } from '@linaria/core';
-import { useState } from 'react';
+import { css } from "@linaria/core";
+import { useState } from "react";
 
 const footerContainerStyle = css`
   position: fixed;
@@ -114,28 +114,62 @@ export default function Footer() {
           title={isCollapsed ? "Show info" : "Hide info"}
         >
           {isCollapsed ? (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" /></svg>
-          ) : '»'}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <path d="M12 16v-4" />
+              <path d="M12 8h.01" />
+            </svg>
+          ) : (
+            "»"
+          )}
         </button>
 
         {!isCollapsed && (
           <div className={contentStyle}>
-            <a href="https://github.com/up-the-hill/sunsets-on-a-map" target="_blank" rel="noopener noreferrer">
+            <a
+              href="https://github.com/up-the-hill/sunsets-on-a-map"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               GitHub
             </a>
             <span>|</span>
-            <button className="link-button" onClick={() => setShowPrivacy(true)}>Privacy Policy</button>
+            <button
+              className="link-button"
+              onClick={() => setShowPrivacy(true)}
+            >
+              Privacy Policy
+            </button>
           </div>
         )}
       </div>
 
       {showPrivacy && (
-        <div className={modalOverlayStyle} onClick={() => setShowPrivacy(false)}>
-          <div className={modalContentStyle} onClick={(e) => e.stopPropagation()}>
-            <button className="close" onClick={() => setShowPrivacy(false)}>×</button>
+        <div
+          className={modalOverlayStyle}
+          onClick={() => setShowPrivacy(false)}
+        >
+          <div
+            className={modalContentStyle}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button className="close" onClick={() => setShowPrivacy(false)}>
+              ×
+            </button>
             <h2>Privacy Policy</h2>
             <p>
-              No personally identifying information is stored in the use of this app.
+              No personally identifying information is stored in the use of this
+              app.
             </p>
           </div>
         </div>

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import { css } from '@linaria/core';
-import Spinner from './Spinner';
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { css } from "@linaria/core";
+import Spinner from "./Spinner";
 
 interface PopupProps {
   id: string;
@@ -27,7 +27,7 @@ export default function SunsetPopup({ id }: PopupProps) {
         }
       } catch (err) {
         if (active) {
-          setError('Failed to load image');
+          setError("Failed to load image");
           console.error(err);
         }
       } finally {
@@ -38,7 +38,9 @@ export default function SunsetPopup({ id }: PopupProps) {
     }
 
     fetchImage();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [id]);
 
   function handleOpen() {
@@ -55,10 +57,12 @@ export default function SunsetPopup({ id }: PopupProps) {
 
   return (
     <>
-      <div className={css`
-        padding: 10px;
-        max-width: 200px;
-      `}>
+      <div
+        className={css`
+          padding: 10px;
+          max-width: 200px;
+        `}
+      >
         <img
           src={imageUrl}
           alt="Sunset"
@@ -72,52 +76,53 @@ export default function SunsetPopup({ id }: PopupProps) {
         />
       </div>
 
-      {imageOpen && createPortal(
-        <div
-          onClick={handleClose}
-          className={css`
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100dvw;
-            height: 100dvh;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10000;
-          `}
-        >
-          <button
+      {imageOpen &&
+        createPortal(
+          <div
             onClick={handleClose}
             className={css`
-              position: absolute;
-              top: 20px;
-              right: 20px;
-              background: none;
-              border: none;
-              color: white;
-              font-size: 2rem;
-              cursor: pointer;
-              z-index: 1000;
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100dvw;
+              height: 100dvh;
+              background-color: rgba(0, 0, 0, 0.8);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              z-index: 10000;
             `}
           >
-            &#10005;
-          </button>
-          <img
-            src={imageUrl}
-            alt="Sunset Fullscreen"
-            className={css`
-              max-width: 90%;
-              max-height: 90%;
-              object-fit: contain;
-              box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            `}
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>,
-        document.body
-      )}
+            <button
+              onClick={handleClose}
+              className={css`
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 2rem;
+                cursor: pointer;
+                z-index: 1000;
+              `}
+            >
+              &#10005;
+            </button>
+            <img
+              src={imageUrl}
+              alt="Sunset Fullscreen"
+              className={css`
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+              `}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>,
+          document.body,
+        )}
     </>
   );
 }

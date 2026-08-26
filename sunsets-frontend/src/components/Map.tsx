@@ -1,13 +1,13 @@
-import { css } from '@linaria/core';
-import { useEffect, useRef, useState } from 'react';
-import UploadModal from './UploadModal';
-import SunsetPopup from './SunsetPopup';
-import { createRoot } from 'react-dom/client';
-import Debug from './Debug';
+import { css } from "@linaria/core";
+import { useEffect, useRef, useState } from "react";
+import UploadModal from "./UploadModal";
+import SunsetPopup from "./SunsetPopup";
+import { createRoot } from "react-dom/client";
+import Debug from "./Debug";
 
 // maplibregl-js
-import maplibregl, { Popup, GeoJSONSource, Marker } from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css'
+import maplibregl, { Popup, GeoJSONSource, Marker } from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 // stadia maps search
 import { MapLibreSearchControl } from "@stadiamaps/maplibre-search-box";
@@ -20,7 +20,7 @@ async function loadPoints(map: maplibregl.Map) {
     const res = await fetch(`/api/sunsets`);
     const data = await res.json();
 
-    const source = map.getSource('sunsets') as GeoJSONSource;
+    const source = map.getSource("sunsets") as GeoJSONSource;
     if (source) {
       source.setData(data);
     }
@@ -34,12 +34,13 @@ export default function Map() {
   const clickMarkerRef = useRef<null | Marker>(null);
   const [clickMarker, setClickMarker] = useState<null | Marker>(null);
   const [displayUploadModal, setDisplayUploadModal] = useState(false);
+  const [hint, setHint] = useState<string | null>(null);
 
-  const addPoint = (point: { id: string, lng: number, lat: number }) => {
+  const addPoint = (point: { id: string; lng: number; lat: number }) => {
     if (!mapInstance) return;
 
     // Create a DOM element for the marker
-    const el = document.createElement('div');
+    const el = document.createElement("div");
     el.className = css`
       width: 16px;
       height: 16px;
@@ -50,10 +51,10 @@ export default function Map() {
     `;
 
     // handle click on temporary marker
-    el.addEventListener('click', (e) => {
+    el.addEventListener("click", (e) => {
       e.stopPropagation();
 
-      const popupNode = document.createElement('div');
+      const popupNode = document.createElement("div");
       const root = createRoot(popupNode);
 
       new Popup()
@@ -79,14 +80,14 @@ export default function Map() {
 
   useEffect(() => {
     const map = new maplibregl.Map({
-      container: 'map', // container id
-      style: '/styles/sunset',
+      container: "map", // container id
+      style: "/styles/sunset",
       center: [151.2057, -33.8727],
       attributionControl: false,
-      zoom: 12
+      zoom: 12,
     });
     setMapInstance(map);
-    map.addControl(new maplibregl.AttributionControl(), 'bottom-left');
+    map.addControl(new maplibregl.AttributionControl(), "bottom-left");
 
     const searchControl = new MapLibreSearchControl({
       searchOnEnter: true,
@@ -99,132 +100,132 @@ export default function Map() {
       // baseUrl: "https://api-eu.stadiamaps.com",
     });
 
-    map.on('load', async () => {
+    map.on("load", async () => {
       map.addControl(searchControl, "top-left");
       // Initialize the geolocate control.
       const geolocate = new maplibregl.GeolocateControl({
         positionOptions: {
-          enableHighAccuracy: true
+          enableHighAccuracy: true,
         },
-        trackUserLocation: true
+        trackUserLocation: true,
       });
       // Add the control to the map.
       map.addControl(geolocate);
       // Set an event listener that fires
       // when an error event occurs.
-      geolocate.on('error', () => {
+      geolocate.on("error", () => {
         map.removeControl(geolocate);
         map.addControl(geolocate);
-        alert('Error finding user location, please turn on GPS');
+        setHint("Error finding user location, please turn on GPS");
+        setTimeout(() => setHint(null), 3000);
       });
 
       geolocate.trigger();
-      map.addSource('sunsets', {
-        type: 'geojson',
+      map.addSource("sunsets", {
+        type: "geojson",
         data: {
-          type: 'FeatureCollection',
-          features: []
+          type: "FeatureCollection",
+          features: [],
         },
         cluster: true,
         clusterMaxZoom: 14,
-        clusterRadius: 20
+        clusterRadius: 20,
       });
 
       map.addLayer({
-        id: 'clusters',
-        type: 'circle',
-        source: 'sunsets',
-        filter: ['has', 'point_count'],
+        id: "clusters",
+        type: "circle",
+        source: "sunsets",
+        filter: ["has", "point_count"],
         paint: {
-          'circle-color': [
-            'step',
-            ['get', 'point_count'],
-            '#FA9B6B',
+          "circle-color": [
+            "step",
+            ["get", "point_count"],
+            "#FA9B6B",
             100,
-            '#FBBC9D',
+            "#FBBC9D",
             750,
-            '#FDDECE'
+            "#FDDECE",
           ],
-          'circle-radius': [
-            'step',
-            ['get', 'point_count'],
+          "circle-radius": [
+            "step",
+            ["get", "point_count"],
             20,
             100,
             30,
             750,
-            40
-          ]
-        }
+            40,
+          ],
+        },
       });
 
       map.addLayer({
-        id: 'cluster-count',
-        type: 'symbol',
-        source: 'sunsets',
-        filter: ['has', 'point_count'],
+        id: "cluster-count",
+        type: "symbol",
+        source: "sunsets",
+        filter: ["has", "point_count"],
         layout: {
-          'text-field': '{point_count_abbreviated}',
-          'text-size': 12
-        }
+          "text-field": "{point_count_abbreviated}",
+          "text-size": 12,
+        },
       });
 
       map.addLayer({
-        id: 'unclustered-point',
-        type: 'circle',
-        source: 'sunsets',
-        filter: ['!', ['has', 'point_count']],
+        id: "unclustered-point",
+        type: "circle",
+        source: "sunsets",
+        filter: ["!", ["has", "point_count"]],
         paint: {
-          'circle-color': '#F76218',
-          'circle-radius': 8,
-          'circle-stroke-width': 1,
-          'circle-stroke-color': '#1f271b'
-        }
+          "circle-color": "#F76218",
+          "circle-radius": 8,
+          "circle-stroke-width": 1,
+          "circle-stroke-color": "#1f271b",
+        },
       });
 
       // inspect a cluster on click
-      map.on('click', 'clusters', async (e) => {
+      map.on("click", "clusters", async (e) => {
         const features = map.queryRenderedFeatures(e.point, {
-          layers: ['clusters']
+          layers: ["clusters"],
         });
         const clusterId = features[0].properties.cluster_id;
-        const source = map.getSource('sunsets') as GeoJSONSource;
+        const source = map.getSource("sunsets") as GeoJSONSource;
 
         const zoom = await source.getClusterExpansionZoom(clusterId);
         map.easeTo({
           center: (features[0].geometry as any).coordinates,
-          zoom
+          zoom,
         });
       });
 
-      map.on('click', 'unclustered-point', (e) => {
+      map.on("click", "unclustered-point", (e) => {
         // Prevent map click handler from triggering
         e.originalEvent.stopPropagation();
 
-        const coordinates = (e.features![0].geometry as any).coordinates.slice();
+        const coordinates = (
+          e.features![0].geometry as any
+        ).coordinates.slice();
         const id = e.features![0].properties.id;
 
-        const popupNode = document.createElement('div');
+        const popupNode = document.createElement("div");
         const root = createRoot(popupNode);
 
-        new Popup()
-          .setLngLat(coordinates)
-          .setDOMContent(popupNode)
-          .addTo(map);
+        new Popup().setLngLat(coordinates).setDOMContent(popupNode).addTo(map);
 
         root.render(<SunsetPopup id={id} />);
       });
 
-      map.on('mouseenter', 'clusters', () => {
-        map.getCanvas().style.cursor = 'pointer';
+      map.on("mouseenter", "clusters", () => {
+        map.getCanvas().style.cursor = "pointer";
       });
-      map.on('mouseleave', 'clusters', () => {
-        map.getCanvas().style.cursor = '';
+      map.on("mouseleave", "clusters", () => {
+        map.getCanvas().style.cursor = "";
       });
-      map.on('mouseenter', 'unclustered-point', () => {
-        map.getCanvas().style.cursor = 'pointer';
+      map.on("mouseenter", "unclustered-point", () => {
+        map.getCanvas().style.cursor = "pointer";
       });
-      map.on('mouseleave', 'unclustered-point', () => {
-        map.getCanvas().style.cursor = '';
+      map.on("mouseleave", "unclustered-point", () => {
+        map.getCanvas().style.cursor = "";
       });
 
       // Load initial points
@@ -232,38 +233,42 @@ export default function Map() {
 
       // EVENT HANDLERS
       // adds event handler to create a marker on click (for uploading)
-      map.on('click', (e) => {
+      map.on("click", (e) => {
         const target = e.originalEvent.target as Element;
         // Check if we clicked on a map control, existing popup, or our clustered layers
-        if (target.closest('.maplibregl-popup') || target.closest('.maplibregl-marker')) {
+        if (
+          target.closest(".maplibregl-popup") ||
+          target.closest(".maplibregl-marker")
+        ) {
           return;
         }
 
-        const features = map.queryRenderedFeatures(e.point, { layers: ['clusters', 'unclustered-point'] });
+        const features = map.queryRenderedFeatures(e.point, {
+          layers: ["clusters", "unclustered-point"],
+        });
         if (features.length > 0) return;
 
         if (clickMarkerRef.current) {
           clickMarkerRef.current.remove();
         }
 
-        const newMarker = new Marker()
-          .setLngLat(e.lngLat)
-          .addTo(map);
+        const newMarker = new Marker().setLngLat(e.lngLat).addTo(map);
 
         clickMarkerRef.current = newMarker;
         setClickMarker(newMarker);
-      })
-    })
+      });
+    });
 
     return () => {
       if (clickMarkerRef.current) clickMarkerRef.current.remove();
       map.remove();
-    }
-  }, [])
+    };
+  }, []);
 
   function handleShowModal() {
     if (!clickMarker) {
-      alert("Please drop a marker on the map first.");
+      setHint("Tap the map to drop a marker first.");
+      setTimeout(() => setHint(null), 3000);
       return;
     }
     setDisplayUploadModal(true);
@@ -280,40 +285,74 @@ export default function Map() {
 
   return (
     <div>
-      {IS_DEV && (
-        <Debug map={mapInstance}></Debug>
-      )}
-      <button onClick={handleShowModal} aria-label="Add Point" title="Add Point" className={css`
-        position: absolute;
-        display: grid;
-        place-items: center;
-        height: 33px;
-        width: 33px;
-        z-index: 999;
-        right: 0;
-        margin: 8px 50px;
-        font-size: 1.6rem;
-        background-color: #fff;
-        border-radius: 5px;
-        border: 2px solid rgba(0, 0, 0, 0.1);
-        background-clip: padding-box; 
-        padding: 0.5rem;
-        cursor: pointer;
-        &:hover {
-          background-color: #f0f0f0;
-        }
-      `}>
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" stroke='#333' strokeWidth='2' strokeLinecap='round'> <path d="M 5 1 L 5 9 M 1 5 L 9 5"></path></svg>
+      {IS_DEV && <Debug map={mapInstance}></Debug>}
+      <button
+        onClick={handleShowModal}
+        aria-label="Add Point"
+        title="Add Point"
+        className={css`
+          position: absolute;
+          display: grid;
+          place-items: center;
+          height: 33px;
+          width: 33px;
+          z-index: 999;
+          right: 0;
+          margin: 8px 50px;
+          font-size: 1.6rem;
+          background-color: #fff;
+          border-radius: 5px;
+          border: 2px solid rgba(0, 0, 0, 0.1);
+          background-clip: padding-box;
+          padding: 0.5rem;
+          cursor: pointer;
+          &:hover {
+            background-color: #f0f0f0;
+          }
+        `}
+      >
+        <svg
+          version="1.1"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 10 10"
+          stroke="#333"
+          strokeWidth="2"
+          strokeLinecap="round"
+        >
+          {" "}
+          <path d="M 5 1 L 5 9 M 1 5 L 9 5"></path>
+        </svg>
       </button>
-      {
-        displayUploadModal && (
-          <UploadModal handleCloseModal={handleCloseModal} clickMarker={clickMarker} addPoint={addPoint} />
-        )
-      }
-      <div id="map" className={css`
-        height: 100dvh;
-      `}>
-      </div>
+      {hint && (
+        <div
+          className={css`
+            position: absolute;
+            top: 50px;
+            right: 8px;
+            z-index: 999;
+            background-color: rgba(31, 39, 27, 0.9);
+            color: #fff;
+            padding: 0.5rem 0.9rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+          `}
+        >
+          {hint}
+        </div>
+      )}
+      {displayUploadModal && (
+        <UploadModal
+          handleCloseModal={handleCloseModal}
+          clickMarker={clickMarker}
+          addPoint={addPoint}
+        />
+      )}
+      <div
+        id="map"
+        className={css`
+          height: 100dvh;
+        `}
+      ></div>
     </div>
-  )
+  );
 }
