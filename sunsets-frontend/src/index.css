@@ -8,8 +8,8 @@
   box-sizing: border-box;
 }
 
-/* 2. Remove default margin */
-* {
+/* 2. Remove default margin (keep dialog's UA margin:auto so modals stay centered) */
+*:not(dialog) {
   margin: 0;
 }
 

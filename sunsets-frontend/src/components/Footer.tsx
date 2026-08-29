@@ -1,5 +1,5 @@
 import { css } from "@linaria/core";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const footerContainerStyle = css`
   position: fixed;
@@ -75,26 +75,16 @@ const contentStyle = css`
   }
 `;
 
-const modalOverlayStyle = css`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-`;
-
 const modalContentStyle = css`
   background: var(--honeydew);
   color: var(--charcoal-brown);
   border: 1px solid var(--charcoal-brown);
   padding: 20px;
   max-width: 400px;
-  position: relative;
+
+  &::backdrop {
+    background-color: rgba(0, 0, 0, 0.8);
+  }
 
   button.close {
     position: absolute;
@@ -115,6 +105,12 @@ const modalContentStyle = css`
 export default function Footer() {
   const [showPrivacy, setShowPrivacy] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(true);
+  const privacyRef = useRef<HTMLDialogElement>(null);
+
+  // showModal() gives focus-trap + Esc + backdrop; close via .close() restores focus
+  useEffect(() => {
+    if (showPrivacy) privacyRef.current?.showModal();
+  }, [showPrivacy]);
 
   return (
     <>
@@ -179,26 +175,28 @@ export default function Footer() {
         )}
       </div>
 
-      {showPrivacy && (
-        <div
-          className={modalOverlayStyle}
-          onClick={() => setShowPrivacy(false)}
+      <dialog
+        ref={privacyRef}
+        className={modalContentStyle}
+        onClose={() => setShowPrivacy(false)}
+        onClick={(e) => {
+          if (e.target === privacyRef.current) privacyRef.current.close();
+        }}
+        aria-labelledby="privacy-title"
+      >
+        <button
+          type="button"
+          className="close"
+          onClick={() => privacyRef.current?.close()}
         >
-          <div
-            className={modalContentStyle}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button className="close" onClick={() => setShowPrivacy(false)}>
-              ×
-            </button>
-            <h2>Privacy Policy</h2>
-            <p>
-              No personally identifying information is stored in the use of this
-              app.
-            </p>
-          </div>
-        </div>
-      )}
+          ×
+        </button>
+        <h2 id="privacy-title">Privacy Policy</h2>
+        <p>
+          No personally identifying information is stored in the use of this
+          app.
+        </p>
+      </dialog>
     </>
   );
 }
