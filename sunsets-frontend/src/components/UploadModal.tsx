@@ -17,6 +17,7 @@ export default function UploadModal({
 }: UploadModalProps) {
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [fileName, setFileName] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState<{
     text: string;
@@ -157,16 +158,14 @@ export default function UploadModal({
         onClick={(e) => e.stopPropagation()}
         className={css`
           z-index: 9999;
-          background-color: #fff;
+          background-color: var(--honeydew);
           padding: 1em;
           margin: auto auto;
           min-width: 20em;
           display: grid;
           gap: 0.5rem;
-          border-radius: 5px;
-          border: 1px solid var(--charcoal-brown);
           border-radius: 0;
-          background-color: var(--honeydew);
+          border: 1px solid var(--charcoal-brown);
           position: relative;
         `}
       >
@@ -212,7 +211,15 @@ export default function UploadModal({
             name="sunset"
             accept="image/png, image/jpeg"
             required
-            onChange={(e) => setFileName(e.target.files?.[0]?.name ?? null)}
+            onChange={(e) => {
+              const file = e.target.files?.[0] ?? null;
+              setFileName(file?.name ?? null);
+              // ponytail: revoke previous url on change; skip unmount cleanup, one url leaks per open at worst
+              setPreview((prev) => {
+                if (prev) URL.revokeObjectURL(prev);
+                return file ? URL.createObjectURL(file) : null;
+              });
+            }}
             className={css`
               position: absolute;
               width: 1px;
@@ -242,6 +249,18 @@ export default function UploadModal({
           >
             {fileName ?? "Choose a photo…"}
           </label>
+          {preview && (
+            <img
+              src={preview}
+              alt="Selected sunset preview"
+              className={css`
+                width: 100%;
+                max-height: 200px;
+                object-fit: contain;
+                border: 1px solid var(--charcoal-brown);
+              `}
+            />
+          )}
           <div className="submit-area">
             <button
               disabled={uploading}
